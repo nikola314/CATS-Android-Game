@@ -10,15 +10,44 @@ public class User {
     @PrimaryKey(autoGenerate = true)
     private long userId;
 
-    @ColumnInfo(name="name")
-    private String name;
+    @ColumnInfo(name="username")
+    private String username;
 
-    @ColumnInfo(name = "highScore")
-    private int highScore;
+    @ColumnInfo(name = "chassisId")
+    private long chassisId;
 
-    public User(String name, int highScore) {
-        this.name = name;
-        this.highScore = highScore;
+    @ColumnInfo(name = "wheelsId")
+    private long wheelsId;
+
+    @ColumnInfo(name = "weaponId")
+    private long weaponId;
+
+    public User(String username) {
+        this.username = username;
+    }
+
+    public long getChassisId() {
+        return chassisId;
+    }
+
+    public void setChassisId(long chassisId) {
+        this.chassisId = chassisId;
+    }
+
+    public long getWheelsId() {
+        return wheelsId;
+    }
+
+    public void setWheelsId(long wheelsId) {
+        this.wheelsId = wheelsId;
+    }
+
+    public long getWeaponId() {
+        return weaponId;
+    }
+
+    public void setWeaponId(long weaponId) {
+        this.weaponId = weaponId;
     }
 
     public long getUserId() {
@@ -29,19 +58,11 @@ public class User {
         this.userId = userId;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getHighScore() {
-        return highScore;
-    }
-
-    public void setHighScore(int highScore) {
-        this.highScore = highScore;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

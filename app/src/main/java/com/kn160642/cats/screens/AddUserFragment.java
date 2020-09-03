@@ -48,7 +48,7 @@ public class AddUserFragment extends Fragment {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        MyDatabase.getInstance(AddUserFragment.this.getContext()).userDao().insertUser(new User(username, 0));
+                        MyDatabase.getInstance(AddUserFragment.this.getContext()).userDao().insertUser(new User(username));
                     }
                 }).start();
 

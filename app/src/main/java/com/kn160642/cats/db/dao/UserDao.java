@@ -18,7 +18,4 @@ public abstract class UserDao {
 
     @Query("SELECT * FROM user")
     public abstract LiveData<List<User>> getAllUsers();
-
-    @Query("UPDATE user SET highScore = :score where userId=:id")
-    public abstract void updateScore(long id, int score);
 }

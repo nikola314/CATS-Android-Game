@@ -11,7 +11,7 @@ import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.dao.UserDao;
 
 
-@Database(entities = {User.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class}, version = 2, exportSchema = false)
 public abstract class MyDatabase extends RoomDatabase {
     public abstract UserDao userDao();
 
