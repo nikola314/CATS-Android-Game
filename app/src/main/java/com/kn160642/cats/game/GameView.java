@@ -5,13 +5,18 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.kn160642.cats.game.garage.Garage;
+import com.kn160642.cats.helpers.Globals;
 
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
+    Garage garage;
 
     private void init(){
         getHolder().addCallback(this);
@@ -44,6 +49,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         thread.setRunning(true);
         thread.start();
+        garage = new Garage(getResources());
     }
 
     @Override
@@ -73,10 +79,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         if (canvas != null) {
-            canvas.drawColor(Color.WHITE);
+            canvas.drawColor(Color.LTGRAY);
+            // TODO: dont create paint in every draw
             Paint paint = new Paint();
             paint.setColor(Color.rgb(250, 0, 0));
-            canvas.drawRect(100, 100, 200, 200, paint);
+            garage.draw(canvas);
+            String user = Globals.getActiveUser() == null? "nmp": Globals.getActiveUser();
+            canvas.drawText(user,100,100,paint);
         }
     }
 }

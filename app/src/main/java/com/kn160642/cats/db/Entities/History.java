@@ -11,7 +11,7 @@ public class History {
     private long historyId;
 
     @ColumnInfo(name="userId")
-    private int userId;
+    private long userId;
 
     @ColumnInfo(name="result")
     private int result;
@@ -24,11 +24,11 @@ public class History {
         this.historyId = historyId;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

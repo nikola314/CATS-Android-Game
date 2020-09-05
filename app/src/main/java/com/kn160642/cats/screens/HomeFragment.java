@@ -12,6 +12,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -19,6 +20,7 @@ import android.widget.Spinner;
 import com.kn160642.cats.R;
 import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.MyDatabase;
+import com.kn160642.cats.helpers.Globals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +57,8 @@ public class HomeFragment extends Fragment {
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Spinner s = root.findViewById(R.id.spinner);
+                Globals.setActiveUser((String)s.getSelectedItem());
                 NavHostFragment navHostFragment = (NavHostFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 NavController navController = navHostFragment.getNavController();
                 navController.navigate(R.id.action_homeFragment_to_gameFragment);

@@ -1,5 +1,7 @@
 package com.kn160642.cats.helpers;
 
+import android.graphics.Rect;
+
 public class TypesHelper {
     public static class ComponentType {
         public static final int CHASSIS = 0;
