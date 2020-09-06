@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment {
 
                 List<String> list = new ArrayList<>();
                 for(User u: users){
-                    list.add(u.getUsername());
+                    list.add(u.getUserId()+": "+u.getUsername());
                 }
 
                 ArrayAdapter<String> spinnerAdapter =new ArrayAdapter<String>(HomeFragment.this.getContext(),R.layout.support_simple_spinner_dropdown_item,list);

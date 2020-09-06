@@ -1,13 +1,13 @@
 package com.kn160642.cats.helpers;
 
 public class Globals {
-    private static String username;
+    private static String user;
 
     public static String getActiveUser(){
-        return username;
+        return user;
     }
 
-    public static void setActiveUser(String username){
-        Globals.username = username;
+    public static void setActiveUser(String user){
+        Globals.user = user;
     }
 }

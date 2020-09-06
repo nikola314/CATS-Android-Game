@@ -17,6 +17,11 @@ public class UserComponent {
     @ColumnInfo(name="componentId")
     private long componentId;
 
+    public UserComponent(long userId, long componentId){
+        this.componentId = componentId;
+        this.userId = userId;
+    }
+
     public long getUserComponentId() {
         return userComponentId;
     }

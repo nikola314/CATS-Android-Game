@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,4 +9,67 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"></com.kn160642.cats.game.GameView>
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btnSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="25dp"
+        android:text="Settings" />
+
+    <Button
+        android:id="@+id/Stats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="22dp"
+        android:layout_toStartOf="@+id/btnSettings"
+        android:text="Stats" />
+
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="138dp"
+        android:layout_height="82dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="17dp"
+        android:layout_marginBottom="17dp"
+        android:text="PLAY" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvChassis"
+        android:layout_width="240dp"
+        android:layout_height="83dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="35dp" >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvWheels"
+        android:layout_width="240dp"
+        android:layout_height="83dp"
+        android:layout_below="@+id/rvChassis"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="18dp" >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvWeapons"
+        android:layout_width="240dp"
+        android:layout_height="83dp"
+        android:layout_below="@+id/rvWheels"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="18dp" >
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+</RelativeLayout>

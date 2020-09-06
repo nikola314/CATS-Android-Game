@@ -15,12 +15,20 @@ import java.util.List;
 public abstract class ComponentDao {
 
     @Insert
-    public abstract void insertComponent(Component u);
+    public abstract long insertComponent(Component u);
+
+    @Insert
+    public abstract long insertUserComponent(UserComponent u);
 
     @Query("SELECT * FROM component")
     public abstract LiveData<List<Component>> getAllComponents();
 
-    @Query("SELECT componentId, name, type, power, health, energy FROM usercomponent uc JOIN component c ON uc.componentId=c.componentId JOIN user u ON u.userId=uc.userId WHERE username = :username")
-    public abstract LiveData<List<UserComponent>> getAllComponentsOfUser(String username);
+    @Query("SELECT * FROM component WHERE componentId IN (SELECT componentId FROM usercomponent WHERE userId = :userId)")
+    public abstract LiveData<List<Component>> getUserComponents(long userId);
+
+
+
+//    @Query("SELECT componentId, name, type, power, health, energy FROM usercomponent uc JOIN component c ON uc.componentId=c.componentId JOIN user u ON u.userId=uc.userId WHERE u.username = :username")
+//    public abstract LiveData<List<UserComponent>> getAllComponentsOfUser(String username);
 
 }

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.os.UserHandle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import com.kn160642.cats.R;
 import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.MyDatabase;
+import com.kn160642.cats.db.handlers.UserHandler;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -45,12 +47,7 @@ public class AddUserFragment extends Fragment {
 
                 // TODO: check if user already exists
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        MyDatabase.getInstance(AddUserFragment.this.getContext()).userDao().insertUser(new User(username));
-                    }
-                }).start();
+                UserHandler.addUser(getContext(),username);
 
 
                 NavHostFragment navHostFragment = (NavHostFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);

@@ -33,11 +33,12 @@ public class Component {
     @ColumnInfo(name="type")
     private int type;
 
-    public Component(int power, int health, int energy, int type) {
+    public Component(String name, int power, int health, int energy, int type) {
         this.power = power;
         this.health = health;
         this.energy = energy;
         this.type = type;
+        this.name=name;
     }
 
     public long getComponentId() {
