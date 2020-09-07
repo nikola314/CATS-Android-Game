@@ -23,4 +23,10 @@ public abstract class UserDao {
     @Query("SELECT userId FROM user WHERE username = :username")
     public abstract long getUserId(String username);
 
+    @Query("SELECT * FROM user WHERE userId = :id")
+    public abstract User getUserById(long id);
+
+    @Update
+    public abstract void updateUser(User u);
+
 }

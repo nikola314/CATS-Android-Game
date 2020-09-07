@@ -7,6 +7,7 @@ import androidx.room.Query;
 
 
 import com.kn160642.cats.db.Entities.Component;
+import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.Entities.UserComponent;
 
 import java.util.List;
@@ -26,6 +27,8 @@ public abstract class ComponentDao {
     @Query("SELECT * FROM component WHERE componentId IN (SELECT componentId FROM usercomponent WHERE userId = :userId)")
     public abstract LiveData<List<Component>> getUserComponents(long userId);
 
+    @Query("SELECT * FROM component WHERE componentId = :id")
+    public abstract Component getComponentById(long id);
 
 
 //    @Query("SELECT componentId, name, type, power, health, energy FROM usercomponent uc JOIN component c ON uc.componentId=c.componentId JOIN user u ON u.userId=uc.userId WHERE u.username = :username")

@@ -5,9 +5,13 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+
+import com.kn160642.cats.helpers.Globals;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,10 +24,22 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-//        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-//        NavController navController = navHostFragment.getNavController();
-//        navController.navigate(R.id.action_homeFragment_to_gameFragment);
 
+        SharedPreferences sharedpreferences = getSharedPreferences(Globals.sharedPreferencesName,
+                Context.MODE_PRIVATE);
+
+
+        if (sharedpreferences.contains(Globals.botPlays) == false) {
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putBoolean(Globals.botPlays, true);
+            editor.commit();
+        }
+
+        if (sharedpreferences.contains(Globals.musicOn) == false) {
+            SharedPreferences.Editor editor = sharedpreferences.edit();
+            editor.putBoolean(Globals.musicOn, true);
+            editor.commit();
+        }
 
     }
 }

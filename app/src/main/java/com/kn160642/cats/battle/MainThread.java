@@ -1,18 +1,20 @@
-package com.kn160642.cats.game;
+package com.kn160642.cats.battle;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
+import com.kn160642.cats.game.GameView;
+
 public class MainThread extends Thread {
     private SurfaceHolder surfaceHolder;
-    private GameView gameView;
+    private BattleView gameView;
     private boolean running;
     public static Canvas canvas;
 
     private int targetFPS = 60;
     private double averageFPS;
 
-    public MainThread(SurfaceHolder surfaceHolder, GameView gameView) {
+    public MainThread(SurfaceHolder surfaceHolder, BattleView gameView) {
         super();
         this.surfaceHolder = surfaceHolder;
         this.gameView = gameView;
