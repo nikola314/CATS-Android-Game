@@ -11,9 +11,11 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.kn160642.cats.db.Entities.Box;
 import com.kn160642.cats.db.Entities.Component;
 import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.Entities.UserComponent;
+import com.kn160642.cats.db.dao.BoxDao;
 import com.kn160642.cats.db.dao.ComponentDao;
 import com.kn160642.cats.db.dao.UserDao;
 import com.kn160642.cats.helpers.TypesHelper;
@@ -22,10 +24,11 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 
-@Database(entities = {User.class, Component.class, UserComponent.class}, version = 8, exportSchema = false)
+@Database(entities = {User.class, Component.class, UserComponent.class, Box.class}, version = 10, exportSchema = false)
 public abstract class MyDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract ComponentDao componentDao();
+    public abstract BoxDao boxDao();
 
     private static MyDatabase instance = null;
 
@@ -87,6 +90,20 @@ public abstract class MyDatabase extends RoomDatabase {
                 user.setWheelsId(wheels);
                 user.setWeaponId(weapon);
                 long userId = db.userDao().insertUser(user);
+
+                Box b = new Box();
+                b.setTimestamp(System.currentTimeMillis());
+                b.setTimeToOpen(10000000);
+                b.setUserId(userId);
+                b.setOpened(false);
+                db.boxDao().insertBox(b);
+
+                b = new Box();
+                b.setTimestamp(System.currentTimeMillis());
+                b.setTimeToOpen(1000000000);
+                b.setUserId(userId);
+                b.setOpened(false);
+                db.boxDao().insertBox(b);
 
                 db.componentDao().insertUserComponent(new UserComponent(userId, chassis));
                 db.componentDao().insertUserComponent(new UserComponent(userId, chassis2));

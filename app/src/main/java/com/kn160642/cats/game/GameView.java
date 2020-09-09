@@ -131,8 +131,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             drawWheels(canvas);
             drawWeapons(canvas);
 
-            // TODO: dont create paint in every draw
-//            Paint paint = new Paint();
         }
 
     }

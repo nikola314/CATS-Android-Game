@@ -18,6 +18,9 @@ public class Box {
     @ColumnInfo(name="userId")
     private long userId;
 
+    @ColumnInfo(name="opened")
+    private boolean opened;
+
     public long getBoxId() {
         return boxId;
     }
@@ -57,7 +60,4 @@ public class Box {
     public void setOpened(boolean opened) {
         this.opened = opened;
     }
-
-    @ColumnInfo(name="opened")
-    private boolean opened;
 }

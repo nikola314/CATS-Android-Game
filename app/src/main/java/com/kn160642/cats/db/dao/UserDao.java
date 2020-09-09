@@ -7,6 +7,7 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 
+import com.kn160642.cats.db.Entities.Box;
 import com.kn160642.cats.db.Entities.User;
 
 import java.util.List;

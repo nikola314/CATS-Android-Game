@@ -14,7 +14,6 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -25,11 +24,15 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import com.kn160642.cats.R;
+import com.kn160642.cats.db.Entities.Box;
 import com.kn160642.cats.db.Entities.Component;
 import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.MyDatabase;
+import com.kn160642.cats.game.BoxAdapter;
+import com.kn160642.cats.game.BoxUpdateThread;
 import com.kn160642.cats.game.ComponentAdapter;
 import com.kn160642.cats.game.GameView;
+import com.kn160642.cats.game.MusicPlayer;
 import com.kn160642.cats.helpers.Globals;
 import com.kn160642.cats.helpers.TypesHelper;
 
@@ -60,10 +63,13 @@ public class GameFragment extends Fragment {
     private GameView gameView;
     private User activeUser;
 
+    BoxUpdateThread boxUpdateThread = null;
+
+    private MusicPlayer musicPlayer;
+
     public GameFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -71,9 +77,76 @@ public class GameFragment extends Fragment {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_game, container, false);
 
+        playMusicIfNeeded();
+        initStatsAndSettingsButtons(root);
+        initRecyclerViews(root);
+        initCanvas(root);
+
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        musicPlayer.resume();
+//        boxUpdateThread = new BoxUpdateThread(getContext(), (BoxAdapter)boxesAdapter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        musicPlayer.pause();
+        stopBoxUpdateThread();
+    }
+
+    private void stopBoxUpdateThread(){
+        boolean retry = true;
+        try {
+
+            while(retry){
+                boxUpdateThread.running = false;
+                boxUpdateThread.join();
+                retry = false;
+            }
+        } catch (InterruptedException e) {
+            retry = true;
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        musicPlayer.stop();
+        stopBoxUpdateThread();
+    }
+
+    private void initCanvas(View root) {
+        SurfaceView sfvTrack = (SurfaceView)root.findViewById(R.id.gameView);
+        sfvTrack.setZOrderOnTop(true);    // necessary
+        SurfaceHolder sfhTrackHolder = sfvTrack.getHolder();
+        sfhTrackHolder.setFormat(PixelFormat.TRANSPARENT);
+
+        gameView = root.findViewById(R.id.gameView);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                User u = MyDatabase.getInstance(getContext()).userDao().getUserById(Globals.getActiveUserId());
+                activeUser = u;
+                drawUsersVehicle();
+            }
+        }).start();
+    }
+
+    private void initStatsAndSettingsButtons(View root) {
         Button btnSettings = root.findViewById(R.id.btnSettings);
         Button btnStats = root.findViewById(R.id.btnStats);
-
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +166,17 @@ public class GameFragment extends Fragment {
                 sMusicOn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        // TODO: play or stop music
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        editor.putBoolean(Globals.botPlays, sBotPlays.isChecked());
+                        editor.putBoolean(Globals.musicOn, sMusicOn.isChecked());
+                        editor.commit();
+
+                        if(isChecked){
+                            musicPlayer.start();
+                        }
+                        else{
+                            musicPlayer.stop();
+                        }
                     }
                 });
 
@@ -105,11 +188,6 @@ public class GameFragment extends Fragment {
                                 editor.putBoolean(Globals.botPlays, sBotPlays.isChecked());
                                 editor.putBoolean(Globals.musicOn, sMusicOn.isChecked());
                                 editor.commit();
-                            }
-                        })
-                        .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
                             }
                         });
 
@@ -125,7 +203,19 @@ public class GameFragment extends Fragment {
                 // TODO: implement
             }
         });
+    }
 
+    private void playMusicIfNeeded(){
+        musicPlayer = new MusicPlayer(getActivity().getApplicationContext());
+        final SharedPreferences sharedpreferences = GameFragment.this.getActivity().getSharedPreferences(Globals.sharedPreferencesName,
+                Context.MODE_PRIVATE);
+        final boolean musicOn = sharedpreferences.getBoolean(Globals.musicOn, true);
+        if(musicOn){
+            musicPlayer.start();
+        }
+    }
+
+    private void initRecyclerViews(View root){
         chassisRecyclerView = (RecyclerView) root.findViewById(R.id.rvChassis);
         chassisRecyclerView.setHasFixedSize(true);
         chassisLayoutManager = new LinearLayoutManager(getContext(), RecyclerView.HORIZONTAL,false);
@@ -147,7 +237,7 @@ public class GameFragment extends Fragment {
         boxesRecyclerView.setLayoutManager(boxesLayoutManager);
 
         long userId = Globals.getActiveUserId();
-        // TODO: get data
+
         LiveData<List<Component>> components = MyDatabase.getInstance(getContext()).componentDao().getUserComponents(userId);
         components.observe(getViewLifecycleOwner(), new Observer<List<Component>>() {
             @Override
@@ -172,31 +262,20 @@ public class GameFragment extends Fragment {
             }
         });
 
-
-        SurfaceView sfvTrack = (SurfaceView)root.findViewById(R.id.gameView);
-        sfvTrack.setZOrderOnTop(true);    // necessary
-        SurfaceHolder sfhTrackHolder = sfvTrack.getHolder();
-        sfhTrackHolder.setFormat(PixelFormat.TRANSPARENT);
-
-        gameView = root.findViewById(R.id.gameView);
-
-        new Thread(new Runnable() {
+        LiveData<List<Box>> boxes = MyDatabase.getInstance(getContext()).boxDao().getUnopenedBoxesForUser(Globals.getActiveUserId());
+        boxes.observe(getViewLifecycleOwner(), new Observer<List<Box>>() {
             @Override
-            public void run() {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            public void onChanged(List<Box> boxes) {
+                ArrayList<Box> boxList = new ArrayList<>();
+                for(Box b:boxes){
+                    boxList.add(b);
                 }
-                User u = MyDatabase.getInstance(getContext()).userDao().getUserById(Globals.getActiveUserId());
-                activeUser = u;
-                drawUsersVehicle();
+                boxesAdapter = new BoxAdapter(GameFragment.this, boxList);
+                boxesRecyclerView.setAdapter(boxesAdapter);
+                boxUpdateThread = new BoxUpdateThread(getContext(), (BoxAdapter)boxesAdapter);
+                boxUpdateThread.start();
             }
-        }).start();
-
-        // TODO: get and show user boxes
-
-        return root;
+        });
     }
 
     private void drawUsersVehicle(){
@@ -218,5 +297,11 @@ public class GameFragment extends Fragment {
         gameView.changeSelectedComponent(c);
     }
 
+
+    public void openBox(Box box){
+        // TODO: get random component and add it to user!
+        //       set box opened = true in database
+        //       get boxes and display
+    }
 
 }
