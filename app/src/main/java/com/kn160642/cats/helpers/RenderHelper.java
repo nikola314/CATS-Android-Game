@@ -13,7 +13,9 @@ public class RenderHelper {
     public static class RenderSizes {
 
         public static final int VEHICLE_HEIGHT_FACTOR = 4;
-        public static final int VEHICLE_WIDTH_FACTOR = 5;
+        public static final int VEHICLE_WIDTH_FACTOR = 3;
+
+        public static final int OFFSET_GROUND_FACTOR = 16;
 
         public static final int PEDESTAL_HEIGHT_FACTOR = 5;
         public static final int PEDESTAL_WIDTH_FACTOR = 1;
@@ -27,28 +29,37 @@ public class RenderHelper {
             return new Rect(0, top ,width/PEDESTAL_WIDTH_FACTOR, top + height/PEDESTAL_HEIGHT_FACTOR);
         }
 
-        public static Rect getWheelRect(int ord, Rect vehicle){
+        public static Rect getWheelRect(int ord, Rect vehicle, boolean isLeft){
             int height = 2*vehicle.height()/3;
             int top = vehicle.top + (vehicle.bottom-vehicle.top)/2;
             int bottom = top+height;
             int width = vehicle.width()/4;
-            int left = ord==1? vehicle.left+20: vehicle.right-width;
+            int left;
+            if(isLeft){
+                left = ord==1? vehicle.left+20: vehicle.right-width;
+
+            } else{
+                left = ord == 1? vehicle.right-20-width: vehicle.left+20;
+            }
             int right = left+width;
+
             top= top-vehicle.height()/10;
             return new Rect(left,top,right,bottom);
         }
 
-        public static Rect getWeaponRect(Rect vehicle, Component c){
+        public static Rect getWeaponRect(Rect vehicle, Component c, boolean isLeft){
             int top, left, right, bottom;
             top = vehicle.top-vehicle.height()/5;
             bottom = vehicle.top+vehicle.height()/3;
             left = vehicle.left;
+            if(!isLeft){
+                left = vehicle.right - vehicle.width()/4;
+            }
             right = left+vehicle.width()/4;
             switch(c.getName()) {
                 case "rocket":
                 case "drill":
                 case"chainsaw":
-
                     break;
                 case "blade":
                     right=left+vehicle.width()/6;
@@ -59,6 +70,24 @@ public class RenderHelper {
                     break;
             }
 
+            return new Rect(left,top,right,bottom);
+        }
+
+        public static Rect getWheelRect(int ord, Rect vehicle){
+            return getWheelRect(ord,vehicle,true);
+        }
+
+        public static Rect getWeaponRect(Rect vehicle, Component c){
+            return getWeaponRect(vehicle, c, true);
+        }
+
+        public static Rect getVehicleStartingRect(int width, int height, boolean isLeft){
+            int top = height - height/VEHICLE_HEIGHT_FACTOR;
+            int bottom = height;
+            int left = isLeft?  width-width/VEHICLE_WIDTH_FACTOR:0;
+            int right = left + width/VEHICLE_WIDTH_FACTOR;
+            top-= height/OFFSET_GROUND_FACTOR;
+            bottom-= height/OFFSET_GROUND_FACTOR;
             return new Rect(left,top,right,bottom);
         }
     }
