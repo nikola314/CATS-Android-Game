@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".screens.GameFragment"
-    android:background="@drawable/menu">
+    android:background="@drawable/bckg1">
 
     <com.kn160642.cats.game.GameView
         android:id="@+id/gameView"
@@ -27,7 +27,11 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="22dp"
         android:layout_marginEnd="25dp"
-        android:text="Settings" />
+        android:backgroundTint="#80FFFFFF"
+        android:fontFamily="casual"
+        android:text="Settings"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btnStats"
@@ -37,7 +41,11 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="22dp"
         android:layout_toStartOf="@+id/btnSettings"
-        android:text="Stats" />
+        android:backgroundTint="#80FFFFFF"
+        android:fontFamily="casual"
+        android:text="Stats"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btnPlay"
@@ -47,7 +55,11 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="17dp"
         android:layout_marginBottom="17dp"
-        android:text="PLAY" />
+        android:backgroundTint="#80FFFFFF"
+        android:fontFamily="casual"
+        android:text="PLAY"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChassis"
@@ -57,7 +69,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
-        android:background="#A8FFFFFF">
+        android:background="#80FFFFFF">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -69,7 +81,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
-        android:background="#A8FFFFFF">
+        android:background="#80FFFFFF">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -81,7 +93,7 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
-        android:background="#A8FFFFFF">
+        android:background="#80FFFFFF">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -93,6 +105,84 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="86dp"
         android:layout_marginEnd="25dp"
-        android:background="#A8FFFFFF" />
+        android:background="#80FFFFFF" />
+
+    <ProgressBar
+        android:id="@+id/progressEnergy"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="140dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/rvBoxes"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/tvEnergy"
+        android:progressTint="#E91E63" />
+
+    <ProgressBar
+        android:id="@+id/progressPower"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="140dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/progressEnergy"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/tvPower"
+        android:progressTint="#E91E63" />
+
+    <ProgressBar
+        android:id="@+id/progressHealth"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="140dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/progressPower"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_toStartOf="@+id/tvHealth"
+        android:progressTint="#E91E63" />
+
+    <TextView
+        android:id="@+id/tvEnergy"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/rvBoxes"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="25dp"
+        android:fontFamily="casual"
+        android:text="Energy"
+        android:textAlignment="center"
+        android:textColor="#E91E63"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvPower"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/tvEnergy"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="25dp"
+        android:fontFamily="casual"
+        android:text="Power"
+        android:textAlignment="center"
+        android:textColor="#E91E63"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvHealth"
+        android:layout_width="50dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/tvPower"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="25dp"
+        android:fontFamily="casual"
+        android:text="Health"
+        android:textAlignment="center"
+        android:textColor="#E91E63"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

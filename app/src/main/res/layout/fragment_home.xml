@@ -1,63 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:numColumns="3"
-    tools:context=".screens.HomeFragment">
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="224dp"
-        android:layout_height="101dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="1"
-        android:text="Select user:"
-        android:textAlignment="center"
-        android:textColor="#FF0707"
-        android:textSize="40sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    tools:context=".screens.HomeFragment"
+    android:background="@drawable/bckg1">
 
     <Spinner
         android:id="@+id/spinner"
-        android:layout_width="449dp"
-        android:layout_height="86dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="300dp"
+        android:layout_height="66dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="49dp"
         android:layout_weight="2"
+        android:background="#FA397A"
+        android:backgroundTint="#ADFC76A7"
         android:spinnerMode="dropdown"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:visibility="visible" />
 
     <Button
         android:id="@+id/btn_add_user"
-        android:layout_width="150dp"
-        android:layout_height="83dp"
+        android:layout_width="300dp"
+        android:layout_height="66dp"
         android:layout_row="1"
         android:layout_column="1"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="40dp"
+        android:layout_below="@+id/spinner"
+        android:layout_marginTop="24dp"
         android:layout_weight="1"
+        android:backgroundTint="#80FFFFFF"
+        android:fontFamily="casual"
         android:text="Add new user"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner" />
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:visibility="visible" />
 
     <Button
         android:id="@+id/btn_play"
-        android:layout_width="256dp"
-        android:layout_height="94dp"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
         android:layout_row="1"
         android:layout_column="1"
-        android:layout_marginEnd="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="25dp"
         android:layout_weight="1"
+        android:backgroundTint="#80FFFFFF"
+        android:fontFamily="casual"
         android:text="Play"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btn_add_user"
-        app:layout_constraintVertical_bias="0.474" />
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

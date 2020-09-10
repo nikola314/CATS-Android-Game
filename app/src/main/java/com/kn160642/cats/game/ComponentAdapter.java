@@ -78,4 +78,15 @@ public class ComponentAdapter extends RecyclerView.Adapter<ComponentAdapter.MyVi
     public int getItemCount() {
         return mDataset.size();
     }
+
+    public void swapItems(ArrayList<Component> cm){
+        this.mDataset = cm;
+        parent.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ComponentAdapter.this.notifyDataSetChanged();
+            }
+        });
+
+    }
 }

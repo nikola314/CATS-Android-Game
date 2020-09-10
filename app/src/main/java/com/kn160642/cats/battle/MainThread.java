@@ -7,17 +7,17 @@ import com.kn160642.cats.game.GameView;
 
 public class MainThread extends Thread {
     private SurfaceHolder surfaceHolder;
-    private BattleView gameView;
+    private BattleView battleView;
     private boolean running;
     public static Canvas canvas;
 
     private int targetFPS = 60;
     private double averageFPS;
 
-    public MainThread(SurfaceHolder surfaceHolder, BattleView gameView) {
+    public MainThread(SurfaceHolder surfaceHolder, BattleView battleView) {
         super();
         this.surfaceHolder = surfaceHolder;
-        this.gameView = gameView;
+        this.battleView = battleView;
     }
 
     public void setRunning(boolean isRunning) {
@@ -40,8 +40,8 @@ public class MainThread extends Thread {
             try {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized(surfaceHolder) {
-                    this.gameView.update();
-                    this.gameView.draw(canvas);
+                    this.battleView.update();
+                    this.battleView.draw(canvas);
                 }
             } catch (Exception e) {       }
             finally {

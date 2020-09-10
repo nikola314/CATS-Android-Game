@@ -27,6 +27,12 @@ public abstract class ComponentDao {
     @Query("SELECT * FROM component WHERE componentId IN (SELECT componentId FROM usercomponent WHERE userId = :userId)")
     public abstract LiveData<List<Component>> getUserComponents(long userId);
 
+    @Query("SELECT * FROM component")
+    public abstract List<Component> getAllComponentsDead();
+
+    @Query("SELECT * FROM component WHERE componentId IN (SELECT componentId FROM usercomponent WHERE userId = :userId)")
+    public abstract List<Component> getUserComponentsDead(long userId);
+
     @Query("SELECT * FROM component WHERE componentId = :id")
     public abstract Component getComponentById(long id);
 

@@ -69,30 +69,17 @@ public class BoxAdapter extends RecyclerView.Adapter<BoxAdapter.MyViewHolder> {
         tv.setText(formatRemainingTime(calculateRemainingTime(c)));
         views.add(tv);
 
-/*        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true){
-                    try {
-                        sleep(300);
-                        Log.i("BOXADAPTER", "USAO");
-                        tv.setText(formatRemainingTime(calculateRemainingTime(c)));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();*/
-
         ImageButton image = holder.view.findViewById(R.id.imageButton);
         image.setImageResource(R.drawable.chest);
 
-        holder.view.findViewById(R.id.imageButton).setOnClickListener(new View.OnClickListener() {
+
+        image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(calculateRemainingTime(c)>0) return;
                     parent.openBox(c);
                     mDataset.remove(c);
+                    BoxAdapter.this.notifyDataSetChanged();
             }
         });
     }

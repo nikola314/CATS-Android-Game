@@ -15,6 +15,7 @@ public class MusicPlayer {
     }
 
     public void pause(){
+        if(mediaPlayer!= null)
         mediaPlayer.pause();
     }
 
@@ -30,6 +31,7 @@ public class MusicPlayer {
     }
 
     public void stop(){
+        if(mediaPlayer != null)
         mediaPlayer.stop();
     }
 }

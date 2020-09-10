@@ -49,6 +49,7 @@ public abstract class MyDatabase extends RoomDatabase {
                             @Override
                             public void onOpen(@NonNull SupportSQLiteDatabase db) {
                                 super.onOpen(db);
+                                testing(context);
                                 Log.i("DATABASE", "onOpen");
                             }
                         })
@@ -64,25 +65,25 @@ public abstract class MyDatabase extends RoomDatabase {
             public void run() {
                 MyDatabase db = getInstance(context);
 
-                Component c = new Component("chassis0",80, 70, 70, TypesHelper.ComponentType.CHASSIS);
+                Component c = new Component("chassis0",100, 70, 70, TypesHelper.ComponentType.CHASSIS);
                 long chassis = db.componentDao().insertComponent(c);
                 c = new Component("chassis1",50, 100, 100, TypesHelper.ComponentType.CHASSIS);
                 long chassis2 = db.componentDao().insertComponent(c);
-                c = new Component("wheel0",20, 70, 70, TypesHelper.ComponentType.WHEELS);
+                c = new Component("wheel0",30, 60, 50, TypesHelper.ComponentType.WHEELS);
                 long wheels = db.componentDao().insertComponent(c);
-                c = new Component("wheel1",20, 70, 70, TypesHelper.ComponentType.WHEELS);
+                c = new Component("wheel1",70, 40, 60, TypesHelper.ComponentType.WHEELS);
                 long wheels2 =db.componentDao().insertComponent(c);
-                c = new Component("wheel2",20, 70, 70, TypesHelper.ComponentType.WHEELS);
+                c = new Component("wheel2",50, 90, 50, TypesHelper.ComponentType.WHEELS);
                 long wheels3 = db.componentDao().insertComponent(c);
-                c = new Component("blade",20, 70, 70, TypesHelper.ComponentType.WEAPON);
+                c = new Component("blade",20, 70, 50, TypesHelper.ComponentType.WEAPON);
                 long weapon = db.componentDao().insertComponent(c);
-                c = new Component("chainsaw",20, 70, 70, TypesHelper.ComponentType.WEAPON);
+                c = new Component("chainsaw",70, 90, 90, TypesHelper.ComponentType.WEAPON);
                 long weapon2 = db.componentDao().insertComponent(c);
-                c = new Component("drill",20, 70, 70, TypesHelper.ComponentType.WEAPON);
+                c = new Component("drill",30, 60, 60, TypesHelper.ComponentType.WEAPON);
                 long weapon3 = db.componentDao().insertComponent(c);
-                c = new Component("forklift",20, 70, 70, TypesHelper.ComponentType.WEAPON);
+                c = new Component("forklift",100, 80, 40, TypesHelper.ComponentType.WEAPON);
                 long weapon4 =db.componentDao().insertComponent(c);
-                c = new Component("rocket",20, 70, 70, TypesHelper.ComponentType.WEAPON);
+                c = new Component("rocket",90, 50, 70, TypesHelper.ComponentType.WEAPON);
                 long weapon5 = db.componentDao().insertComponent(c);
 
                 User user = new User("nikola");
@@ -135,6 +136,26 @@ public abstract class MyDatabase extends RoomDatabase {
                 db.componentDao().insertUserComponent(new UserComponent(userId, chassis));
                 db.componentDao().insertUserComponent(new UserComponent(userId, wheels));
                 db.componentDao().insertUserComponent(new UserComponent(userId, weapon));
+            }
+        });
+    }
+
+    private static void testing(final Context context){
+        Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+//                MyDatabase db = getInstance(context);
+//                List<User> users = db.userDao().getAllUsersDead();
+//                for(User u: users){
+//                    for(int i=0;i<4;i++) {
+//                        Box b = new Box();
+//                        b.setTimestamp(System.currentTimeMillis());
+//                        b.setTimeToOpen(10000);
+//                        b.setUserId(2);
+//                        b.setOpened(false);
+//                        db.boxDao().insertBox(b);
+//                    }
+//                }
             }
         });
     }

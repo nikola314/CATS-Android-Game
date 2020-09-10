@@ -24,8 +24,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public static Canvas canvas;
     SurfaceHolder surfaceHolder;
 
-    private Component[] selectedComponents = new Component[3];
+    Component[] selectedComponents = new Component[3];
     Bitmap[] bitmaps;
+
+    public Component[] getSelectedComponents() {
+        return selectedComponents;
+    }
 
     private void init(){
         getHolder().addCallback(this);
@@ -70,12 +74,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void draw(final User u){
-        Log.i("DRAW", "USAO");
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.i("DRAW", "RUN");
-                Log.i("DRAW", u.getUsername());
                 if(u.getChassisId() > 0) {
                     selectedComponents[TypesHelper.ComponentType.CHASSIS] =
                             MyDatabase.getInstance(getContext()).componentDao().getComponentById(u.getChassisId());

@@ -21,6 +21,9 @@ public abstract class UserDao {
     @Query("SELECT * FROM user")
     public abstract LiveData<List<User>> getAllUsers();
 
+    @Query("SELECT * FROM user")
+    public abstract List<User> getAllUsersDead();
+
     @Query("SELECT userId FROM user WHERE username = :username")
     public abstract long getUserId(String username);
 

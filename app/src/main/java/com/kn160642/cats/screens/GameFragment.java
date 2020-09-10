@@ -11,9 +11,12 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -21,12 +24,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.kn160642.cats.R;
 import com.kn160642.cats.db.Entities.Box;
 import com.kn160642.cats.db.Entities.Component;
 import com.kn160642.cats.db.Entities.User;
+import com.kn160642.cats.db.Entities.UserComponent;
 import com.kn160642.cats.db.MyDatabase;
 import com.kn160642.cats.game.BoxAdapter;
 import com.kn160642.cats.game.BoxUpdateThread;
@@ -39,21 +45,24 @@ import com.kn160642.cats.helpers.TypesHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class GameFragment extends Fragment {
 
     private RecyclerView wheelsRecyclerView;
-    private RecyclerView.Adapter wheelsAdapter;
+    private ComponentAdapter wheelsAdapter;
     private RecyclerView.LayoutManager wheelsLayoutManager;
 
     private RecyclerView chassisRecyclerView;
-    private RecyclerView.Adapter chassisAdapter;
+    private ComponentAdapter chassisAdapter;
     private RecyclerView.LayoutManager chassisLayoutManager;
 
     private RecyclerView weaponsRecyclerView;
-    private RecyclerView.Adapter weaponsAdapter;
+    private ComponentAdapter weaponsAdapter;
     private RecyclerView.LayoutManager weaponsLayoutManager;
 
     private RecyclerView boxesRecyclerView;
@@ -62,6 +71,10 @@ public class GameFragment extends Fragment {
 
     private GameView gameView;
     private User activeUser;
+
+    private ProgressBar progressEnergy;
+    private ProgressBar progressHealth;
+    private ProgressBar progressPower;
 
     BoxUpdateThread boxUpdateThread = null;
 
@@ -78,9 +91,11 @@ public class GameFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_game, container, false);
 
         playMusicIfNeeded();
-        initStatsAndSettingsButtons(root);
+        initButtons(root);
         initRecyclerViews(root);
         initCanvas(root);
+        initProgress(root);
+
 
         return root;
     }
@@ -133,7 +148,7 @@ public class GameFragment extends Fragment {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(200);
+                    sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -144,7 +159,29 @@ public class GameFragment extends Fragment {
         }).start();
     }
 
-    private void initStatsAndSettingsButtons(View root) {
+    private void initProgress(View root){
+        progressEnergy = root.findViewById(R.id.progressEnergy);
+        progressPower = root.findViewById(R.id.progressPower);
+        progressHealth = root.findViewById(R.id.progressHealth);
+
+        progressEnergy.setMax(Globals.maxProgress);
+        progressPower.setMax(Globals.maxProgress);
+        progressHealth.setMax(Globals.maxProgress);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    sleep(500);
+                    calculateStrength();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void initButtons(View root) {
         Button btnSettings = root.findViewById(R.id.btnSettings);
         Button btnStats = root.findViewById(R.id.btnStats);
         btnSettings.setOnClickListener(new View.OnClickListener() {
@@ -201,6 +238,16 @@ public class GameFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // TODO: implement
+            }
+        });
+
+        Button btnPlay = root.findViewById(R.id.btnPlay);
+        btnPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment navHostFragment = (NavHostFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+                NavController navController = navHostFragment.getNavController();
+                navController.navigate(R.id.action_gameFragment_to_battleFragment);
             }
         });
     }
@@ -295,13 +342,83 @@ public class GameFragment extends Fragment {
             }
         }).start();
         gameView.changeSelectedComponent(c);
+        calculateStrength();
     }
 
+    private void calculateStrength(){
+        Component[] selected = gameView.getSelectedComponents();
+        int energy = 0, power = 0, health = 0;
+        for(Component c:selected){
+            if(c== null) continue;
+            energy+=c.getEnergy();
+            power+=c.getPower();
+            health+=c.getHealth();
+        }
+        final int finalEnergy = energy;
+        final int finalHealth = health;
+        final int finalPower = power;
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressEnergy.setProgress(finalEnergy);
+                progressHealth.setProgress(finalHealth);
+                progressPower.setProgress(finalPower);
+            }
+        });
+    }
 
-    public void openBox(Box box){
-        // TODO: get random component and add it to user!
-        //       set box opened = true in database
-        //       get boxes and display
+    public void openBox(final Box box){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                box.setOpened(true);
+                MyDatabase db = MyDatabase.getInstance(getContext());
+                db.boxDao().updateBox(box);
+                List<Component> components = db.componentDao().getAllComponentsDead();
+
+                int count = components.size()-1;
+                int randomIndex = (int)(Math.random()*count);
+                Component randomComponent = components.get(randomIndex);
+//                Log.i("BOX", randomComponent.getName());
+                toastFromOtherThread("You got: "+randomComponent.getName());
+
+                UserComponent uc = new UserComponent(Globals.getActiveUserId(),randomComponent.getComponentId());
+                db.componentDao().insertUserComponent(uc);
+                refreshDataSets();
+            }
+        }).start();
+
+    }
+
+    public void toastFromOtherThread(final String message){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getContext(),message,Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private void refreshDataSets(){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Component> chassis = new ArrayList<>();
+                ArrayList<Component> wheels = new ArrayList<>();
+                ArrayList<Component> weapons = new ArrayList<>();
+                List<Component> components = MyDatabase.getInstance(getContext()).componentDao().getUserComponentsDead(Globals.getActiveUserId());
+                for(Component c: components){
+                    switch(c.getType()){
+                        case TypesHelper.ComponentType.CHASSIS: chassis.add(c); break;
+                        case TypesHelper.ComponentType.WEAPON: weapons.add(c); break;
+                        case TypesHelper.ComponentType.WHEELS: wheels.add(c); break;
+                    }
+                }
+                chassisAdapter.swapItems(chassis);
+                wheelsAdapter.swapItems(wheels);
+                weaponsAdapter.swapItems(weapons);
+            }
+        }).start();
     }
 
 }

@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -12,13 +13,14 @@ import android.view.SurfaceView;
 public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
+    private int screenWidth, screenHeight;
+    private Vehicle[] vehicles;
 
     private void init(){
         getHolder().addCallback(this);
         thread = new MainThread(getHolder(), this);
         setFocusable(true);
     }
-
 
     public BattleView(Context context) {
         super(context);
@@ -42,6 +44,22 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        Canvas canvas = null;
+        try{
+            canvas = holder.lockCanvas();
+            screenHeight = canvas.getHeight();
+            screenWidth = canvas.getWidth();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            holder.unlockCanvasAndPost(canvas);
+        }
+
+        initVehicles();
+        if(thread.getState() == Thread.State.TERMINATED){
+            thread = new MainThread(getHolder(), this);
+        }
         thread.setRunning(true);
         thread.start();
     }
@@ -65,8 +83,12 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    public void update() {
+    private void initVehicles(){
+        // TODO: implement
+    }
 
+    public void update() {
+        // TODO: implement
     }
 
     @Override
@@ -75,8 +97,10 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
         if (canvas != null) {
 
             canvas.drawColor(Color.TRANSPARENT);
-            // TODO: dont create paint in every draw
+            // TODO: implement
             Paint paint = new Paint();
+            paint.setColor(Color.RED);
+            canvas.drawCircle(100,100,50, paint);
 
         }
     }

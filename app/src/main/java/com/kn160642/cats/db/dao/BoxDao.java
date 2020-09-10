@@ -23,4 +23,7 @@ public abstract class BoxDao {
     @Query("SELECT * FROM box WHERE userId = :userId AND NOT opened")
     public abstract List<Box> getUnopenedBoxesForUserDeadData(long userId);
 
+    @Update
+    public abstract void updateBox(Box u);
+
 }
