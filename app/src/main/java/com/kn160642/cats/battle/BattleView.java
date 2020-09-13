@@ -14,7 +14,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import com.kn160642.cats.R;
+import com.kn160642.cats.db.Entities.Box;
 import com.kn160642.cats.db.Entities.Component;
+import com.kn160642.cats.db.Entities.History;
 import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.MyDatabase;
 import com.kn160642.cats.helpers.Globals;
@@ -170,18 +172,22 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
-    private void drawWinner(Canvas canvas) {
-        String winner;
+    private int getResult(){
         if(vehicles[PLAYER].getHealth() > vehicles[BOT].getHealth()){
-            winner = "You won!";
+            return TypesHelper.ResultType.WON;
         }
         else if(vehicles[PLAYER].getHealth() > vehicles[BOT].getHealth()){
-            winner = "Opponent won!";
+            return TypesHelper.ResultType.LOST;
         }
         else{
-            winner = "It's a draw!";
+            return TypesHelper.ResultType.DRAW;
         }
-        canvas.drawText(winner,screenWidth/2, screenHeight/2,textPaint);
+    }
+
+    private void drawWinner(Canvas canvas) {
+        String[] winner = new String[]{"You won!", "Opponent won!", "It's a draw!"};
+        int result = getResult();
+        canvas.drawText(winner[result],screenWidth/2, screenHeight/2,textPaint);
     }
 
     public void update() {
@@ -190,6 +196,29 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
         }
         boolean end = checkForEndOfGame();
         if(end){
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    History stat = new History();
+                    stat.setResult(getResult());
+                    stat.setUserId(Globals.getActiveUserId());
+                    MyDatabase db = MyDatabase.getInstance(getContext());
+                    db.historyDao().insertStats(stat);
+                    if(stat.getResult() == TypesHelper.ResultType.WON){
+                        int gamesWon = db.historyDao().getCountOfGamesWon(Globals.getActiveUserId());
+                        if(gamesWon%Globals.winsForBox == 0){
+                            Box b = new Box();
+                            b.setUserId(Globals.getActiveUserId());
+                            b.setTimestamp(System.currentTimeMillis());
+                            b.setTimeToOpen(Globals.defaultTimeToOpen);
+                            b.setOpened(false);
+                            db.boxDao().insertBox(b);
+                            Log.i("BOX","inserted");
+                        }
+                    }
+                }
+            }).start();
 
             // todo: put result in database, stats
             playing = false;

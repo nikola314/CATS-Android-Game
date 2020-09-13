@@ -16,6 +16,8 @@ public class Globals {
     public static final long gameDuration = 1000 * 17;
     public static final double pillarHitStrength = 0.3;
     public static final double weaponDecrement = 0.05;
+    public static final int winsForBox = 3;
+    public static final long defaultTimeToOpen = 1000*60*5; // 5 min
 
 
     public static String getActiveUser(){

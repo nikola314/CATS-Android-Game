@@ -13,10 +13,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.kn160642.cats.db.Entities.Box;
 import com.kn160642.cats.db.Entities.Component;
+import com.kn160642.cats.db.Entities.History;
 import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.Entities.UserComponent;
 import com.kn160642.cats.db.dao.BoxDao;
 import com.kn160642.cats.db.dao.ComponentDao;
+import com.kn160642.cats.db.dao.HistoryDao;
 import com.kn160642.cats.db.dao.UserDao;
 import com.kn160642.cats.helpers.TypesHelper;
 
@@ -24,11 +26,12 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 
-@Database(entities = {User.class, Component.class, UserComponent.class, Box.class}, version = 10, exportSchema = false)
+@Database(entities = {User.class, Component.class, UserComponent.class, Box.class, History.class}, version = 11, exportSchema = false)
 public abstract class MyDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract ComponentDao componentDao();
     public abstract BoxDao boxDao();
+    public abstract HistoryDao historyDao();
 
     private static MyDatabase instance = null;
 

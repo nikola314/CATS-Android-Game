@@ -8,4 +8,10 @@ public class TypesHelper {
         public static final int WHEELS = 1;
         public static final int WEAPON = 2;
     }
+
+    public static class ResultType {
+        public static final int WON = 0;
+        public static final int LOST = 1;
+        public static final int DRAW = 2;
+    }
 }
