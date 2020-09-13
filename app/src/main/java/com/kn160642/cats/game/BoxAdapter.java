@@ -72,6 +72,7 @@ public class BoxAdapter extends RecyclerView.Adapter<BoxAdapter.MyViewHolder> {
         ImageButton image = holder.view.findViewById(R.id.imageButton);
         image.setImageResource(R.drawable.chest);
 
+        holder.view.findViewById(R.id.attributes).setVisibility(View.INVISIBLE);
 
         image.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,12 +103,15 @@ public class BoxAdapter extends RecyclerView.Adapter<BoxAdapter.MyViewHolder> {
 
     public void swapItems(ArrayList<Box> boxes){
         this.mDataset = boxes;
-        parent.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                BoxAdapter.this.notifyDataSetChanged();
-            }
-        });
+        if(parent!=null && parent.getActivity()!=null){
+            parent.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    BoxAdapter.this.notifyDataSetChanged();
+                }
+            });
+        }
+
 
     }
 }

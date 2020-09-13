@@ -151,7 +151,7 @@ public abstract class MyDatabase extends RoomDatabase {
 //                        Box b = new Box();
 //                        b.setTimestamp(System.currentTimeMillis());
 //                        b.setTimeToOpen(10000);
-//                        b.setUserId(2);
+//                        b.setUserId(u.getUserId());
 //                        b.setOpened(false);
 //                        db.boxDao().insertBox(b);
 //                    }

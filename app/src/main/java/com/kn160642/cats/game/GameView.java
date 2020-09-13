@@ -11,6 +11,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import com.kn160642.cats.battle.MainThread;
 import com.kn160642.cats.db.Entities.Component;
@@ -95,6 +96,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void changeSelectedComponent(Component c){
+        if(!(c.getType() == TypesHelper.ComponentType.CHASSIS)){
+            if(selectedComponents[TypesHelper.ComponentType.CHASSIS]!= null &&
+                    c.getEnergy() > selectedComponents[TypesHelper.ComponentType.CHASSIS].getEnergy()){
+                Toast.makeText(getContext(), "You don't have enough energy for this component!",Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
         selectedComponents[c.getType()] = c;
         drawVehicle();
     }

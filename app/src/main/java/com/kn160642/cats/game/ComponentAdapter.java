@@ -58,6 +58,15 @@ public class ComponentAdapter extends RecyclerView.Adapter<ComponentAdapter.MyVi
         TextView tv = holder.view.findViewById(R.id.label1);
         tv.setText(c.getName());
 
+        tv=holder.view.findViewById(R.id.tvEnergy);
+        tv.setText(Integer.toString(c.getEnergy()));
+
+        tv=holder.view.findViewById(R.id.tvPower);
+        tv.setText(Integer.toString(c.getPower()));
+
+        tv=holder.view.findViewById(R.id.tvHealth);
+        tv.setText(Integer.toString(c.getHealth()));
+
         ImageButton image = holder.view.findViewById(R.id.imageButton);
         int imageResourceId = RenderHelper.getImageResourceIdForComponent(c);
         if(imageResourceId!= -1){

@@ -103,8 +103,8 @@ public class GameFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if(musicPlayer!= null)
         musicPlayer.resume();
-//        boxUpdateThread = new BoxUpdateThread(getContext(), (BoxAdapter)boxesAdapter);
     }
 
     @Override
@@ -132,6 +132,7 @@ public class GameFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(musicPlayer != null)
         musicPlayer.stop();
         stopBoxUpdateThread();
     }

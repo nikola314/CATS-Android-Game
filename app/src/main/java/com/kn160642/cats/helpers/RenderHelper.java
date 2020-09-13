@@ -3,6 +3,7 @@ package com.kn160642.cats.helpers;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 
 import com.kn160642.cats.R;
@@ -11,21 +12,44 @@ import com.kn160642.cats.db.Entities.Component;
 public class RenderHelper {
 
     public static class RenderSizes {
+        public static final double PILLAR_OFFSET_TOP_FACTOR = 4;
+        public static final double PILLAR_WIDTH_FACTOR = 8;
 
-        public static final int VEHICLE_HEIGHT_FACTOR = 4;
-        public static final int VEHICLE_WIDTH_FACTOR = 3;
+        public static final double VEHICLE_INITIAL_HEIGHT_FACTOR = 4;
+        public static final double VEHICLE_HEIGHT_FACTOR =1.5 * VEHICLE_INITIAL_HEIGHT_FACTOR;
+        public static final double VEHICLE_WIDTH_FACTOR =1.5* 3;
+
+        public static final int VEHICLE_SPEED = 2;
+        public static final int PILLAR_SPEED = 5;
+        public static final int PILLAR_HIT = 2;
 
         public static final int OFFSET_GROUND_FACTOR = 16;
 
         public static final int PEDESTAL_HEIGHT_FACTOR = 5;
         public static final int PEDESTAL_WIDTH_FACTOR = 1;
 
+        public static Rect getWallStartingRect(int width, int height, int ord){
+            int wallWidth = (int) (width/PILLAR_WIDTH_FACTOR);
+            int wallHeigh = (int) (height - OFFSET_GROUND_FACTOR - height/PILLAR_OFFSET_TOP_FACTOR);
+            int top = (int) (height/PILLAR_OFFSET_TOP_FACTOR);
+            int bottom = top+wallHeigh;
+            int left;
+            if(ord == 1){
+                left = 0 - wallWidth;
+            }
+            else{
+                left = width;
+            }
+            int right = left+wallWidth;
+            return new Rect(left,top,right,bottom);
+        }
+
         public static Rect getVehicleInTheGarageRect(int width, int height){
-            return new Rect(0, height - height/2,width, height - height/2 +height/VEHICLE_HEIGHT_FACTOR);
+            return new Rect(0, height - height/2,width, (int) (height - height/2 +height/VEHICLE_INITIAL_HEIGHT_FACTOR));
         }
 
         public static Rect getPedestalRect(int width, int height){
-            int top =height - height/2+height/VEHICLE_HEIGHT_FACTOR;
+            int top = (int) (height - height/2+height/VEHICLE_HEIGHT_FACTOR);
             return new Rect(0, top ,width/PEDESTAL_WIDTH_FACTOR, top + height/PEDESTAL_HEIGHT_FACTOR);
         }
 
@@ -82,10 +106,10 @@ public class RenderHelper {
         }
 
         public static Rect getVehicleStartingRect(int width, int height, boolean isLeft){
-            int top = height - height/VEHICLE_HEIGHT_FACTOR;
+            int top = (int) (height - height/VEHICLE_HEIGHT_FACTOR);
             int bottom = height;
-            int left = isLeft?  width-width/VEHICLE_WIDTH_FACTOR:0;
-            int right = left + width/VEHICLE_WIDTH_FACTOR;
+            int left = isLeft? (int) (width - width / VEHICLE_WIDTH_FACTOR) :0;
+            int right = (int) (left + width/VEHICLE_WIDTH_FACTOR);
             top-= height/OFFSET_GROUND_FACTOR;
             bottom-= height/OFFSET_GROUND_FACTOR;
             return new Rect(left,top,right,bottom);
@@ -173,4 +197,63 @@ public class RenderHelper {
         }
         return -1;
     }
+    public static Matrix rotateBitmap(Bitmap source,Rect r, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.reset ();
+
+        float vw = r.width();
+        float vh = r.height();
+        float hvw = vw / 2;
+        float hvh = vh / 2;
+        float bw = (float) source.getWidth ();
+        float bh = (float) source.getHeight ();
+
+        // First scale the bitmap to fit into the view.
+        // Use either scale factor for width and height,
+        // whichever is the smallest.
+        float s1x = vw / bw;
+        float s1y = vh / bh;
+        float s1 = (s1x < s1y) ? s1x : s1y;
+        matrix.postScale (s1, s1);
+
+        // Translate the image up and left half the height
+        // and width so rotation (below) is around the center.
+        matrix.postTranslate(-hvw, -hvh);
+
+        // Rotate the bitmap the specified number of degrees.
+        int rotation = (int)angle;
+        matrix.postRotate(rotation);
+
+        // If the bitmap is to be scaled, do so.
+        // Also figure out the x and y offset values, which start
+        // with the values assigned to the view
+        // and are adjusted based on the scale.
+//        float offsetX = getOffsetX (), offsetY = getOffsetY ();
+        float offsetX = r.left, offsetY = r.top;
+        float pScale = 1.0f;
+        if (pScale != 1.0f) {
+
+            matrix.postScale (pScale, pScale);
+
+            float sx = (0.0f + pScale) * vw / 2;
+            float sy = (0.0f + pScale) * vh / 2;
+
+            offsetX += sx;
+            offsetY+= sy;
+
+        } else {
+            offsetX += hvw;
+            offsetY += hvh;
+        }
+
+        // The last translation moves the bitmap to where it has to be to have its top left point be
+        // where it should be following the rotation and scaling.
+        matrix.postTranslate (offsetX, offsetY);
+
+        // Finally, draw the bitmap using the matrix as a guide.
+        return matrix;
+
+    }
+
 }

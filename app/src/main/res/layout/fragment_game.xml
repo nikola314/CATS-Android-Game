@@ -64,7 +64,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvChassis"
         android:layout_width="180dp"
-        android:layout_height="83dp"
+        android:layout_height="90dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="15dp"
@@ -76,7 +76,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvWheels"
         android:layout_width="180dp"
-        android:layout_height="83dp"
+        android:layout_height="90dp"
         android:layout_below="@+id/rvChassis"
         android:layout_alignParentStart="true"
         android:layout_marginStart="15dp"
@@ -88,7 +88,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvWeapons"
         android:layout_width="180dp"
-        android:layout_height="83dp"
+        android:layout_height="90dp"
         android:layout_below="@+id/rvWheels"
         android:layout_alignParentStart="true"
         android:layout_marginStart="15dp"
@@ -116,7 +116,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
         android:layout_toStartOf="@+id/tvEnergy"
-        android:progressTint="#E91E63" />
+        android:progressTint="#FFEB3B" />
 
     <ProgressBar
         android:id="@+id/progressPower"
@@ -127,7 +127,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
         android:layout_toStartOf="@+id/tvPower"
-        android:progressTint="#E91E63" />
+        android:progressTint="#FF5722" />
 
     <ProgressBar
         android:id="@+id/progressHealth"
@@ -151,7 +151,7 @@
         android:fontFamily="casual"
         android:text="Energy"
         android:textAlignment="center"
-        android:textColor="#E91E63"
+        android:textColor="#FFEB3B"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -166,7 +166,7 @@
         android:fontFamily="casual"
         android:text="Power"
         android:textAlignment="center"
-        android:textColor="#E91E63"
+        android:textColor="#FF5722"
         android:textSize="14sp"
         android:textStyle="bold" />
 
