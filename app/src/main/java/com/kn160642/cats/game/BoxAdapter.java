@@ -17,7 +17,9 @@ import com.kn160642.cats.db.Entities.Component;
 import com.kn160642.cats.helpers.RenderHelper;
 import com.kn160642.cats.screens.GameFragment;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -86,13 +88,16 @@ public class BoxAdapter extends RecyclerView.Adapter<BoxAdapter.MyViewHolder> {
     }
 
     private String formatRemainingTime(long millis){
-        if(millis < 0 ) return "Open";
-        return String.format("%1$tH:%1$tM:%1$tS", millis);
+        if(millis <= 0 ) return "Open";
+
+        return new SimpleDateFormat("mm:ss").format(new Date(millis));
     }
 
     private long calculateRemainingTime(Box box){
         long timePassed = System.currentTimeMillis() - box.getTimestamp();
-        return box.getTimeToOpen() - timePassed;
+        long timeRemaining =  box.getTimeToOpen() - timePassed;
+        if(timeRemaining<0) timeRemaining =0;
+        return timeRemaining;
     }
 
     // Return the size of your dataset (invoked by the layout manager)

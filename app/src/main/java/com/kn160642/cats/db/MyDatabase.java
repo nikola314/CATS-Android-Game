@@ -95,19 +95,19 @@ public abstract class MyDatabase extends RoomDatabase {
                 user.setWeaponId(weapon);
                 long userId = db.userDao().insertUser(user);
 
-                Box b = new Box();
-                b.setTimestamp(System.currentTimeMillis());
-                b.setTimeToOpen(10000000);
-                b.setUserId(userId);
-                b.setOpened(false);
-                db.boxDao().insertBox(b);
-
-                b = new Box();
-                b.setTimestamp(System.currentTimeMillis());
-                b.setTimeToOpen(1000000000);
-                b.setUserId(userId);
-                b.setOpened(false);
-                db.boxDao().insertBox(b);
+//                Box b = new Box();
+//                b.setTimestamp(System.currentTimeMillis());
+//                b.setTimeToOpen(1000*60*5);
+//                b.setUserId(userId);
+//                b.setOpened(false);
+//                db.boxDao().insertBox(b);
+//
+//                b = new Box();
+//                b.setTimestamp(System.currentTimeMillis());
+//                b.setTimeToOpen(1000*60*10);
+//                b.setUserId(userId);
+//                b.setOpened(false);
+//                db.boxDao().insertBox(b);
 
                 db.componentDao().insertUserComponent(new UserComponent(userId, chassis));
                 db.componentDao().insertUserComponent(new UserComponent(userId, chassis2));
@@ -139,28 +139,30 @@ public abstract class MyDatabase extends RoomDatabase {
                 db.componentDao().insertUserComponent(new UserComponent(userId, chassis));
                 db.componentDao().insertUserComponent(new UserComponent(userId, wheels));
                 db.componentDao().insertUserComponent(new UserComponent(userId, weapon));
+
+                List<User> users = db.userDao().getAllUsersDead();
+                for(User u: users){
+                    for(int i=0;i<4;i++) {
+                        Box b = new Box();
+                        b.setTimestamp(System.currentTimeMillis());
+                        b.setTimeToOpen(1000*60*(i+5));
+                        b.setUserId(u.getUserId());
+                        b.setOpened(false);
+                        db.boxDao().insertBox(b);
+                    }
+                }
             }
         });
     }
 
     private static void testing(final Context context){
-        Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
-            @Override
-            public void run() {
+//        Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+//            @Override
+//            public void run() {
 //                MyDatabase db = getInstance(context);
-//                List<User> users = db.userDao().getAllUsersDead();
-//                for(User u: users){
-//                    for(int i=0;i<4;i++) {
-//                        Box b = new Box();
-//                        b.setTimestamp(System.currentTimeMillis());
-//                        b.setTimeToOpen(10000);
-//                        b.setUserId(u.getUserId());
-//                        b.setOpened(false);
-//                        db.boxDao().insertBox(b);
-//                    }
-//                }
-            }
-        });
+//
+//            }
+//        });
     }
 
 }
