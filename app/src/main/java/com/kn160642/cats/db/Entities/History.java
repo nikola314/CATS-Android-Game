@@ -39,4 +39,11 @@ public class History {
     public void setResult(int result) {
         this.result = result;
     }
+
+    public String getStringToShow(){
+        String sr = "WON";
+        if(result == 1) sr = "LOST";
+        if(result == 2) sr = "DRAW";
+        return historyId + ". "+ sr;
+    }
 }

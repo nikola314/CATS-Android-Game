@@ -1,6 +1,7 @@
 package com.kn160642.cats.battle;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -10,8 +11,10 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 import com.kn160642.cats.R;
 import com.kn160642.cats.db.Entities.Box;
@@ -27,9 +30,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
+public class BattleView extends SurfaceView implements SurfaceHolder.Callback, View.OnTouchListener {
     private final int PLAYER = 0;
     private final int BOT = 1;
+
+    private boolean botPlays;
+    private int touchDirection = 0; // 1 - forward, -1 - backward
+    private boolean touchFire = false;
+    private float touchX;
 
     private MainThread thread;
     private int screenWidth, screenHeight;
@@ -76,6 +84,10 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
         init();
     }
 
+    public void setBotPlays(boolean botPlays){
+        this.botPlays = botPlays;
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         Canvas canvas = null;
@@ -95,6 +107,7 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
             thread = new MainThread(getHolder(), this);
         }
         gameStart = System.currentTimeMillis();
+        this.setOnTouchListener(this);
         pillarBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pillars);
         thread.setRunning(true);
         thread.start();
@@ -156,14 +169,13 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
             for(Vehicle v: vehicles){
-                v.draw(canvas);
+                if(v!= null) v.draw(canvas);
             }
             if(walls != null){
                 for(Rect pillar: walls){
                     canvas.drawBitmap(pillarBitmap, null, pillar,null);
                 }
             }
-
 
             if(checkForEndOfGame()){
                 drawWinner(canvas);
@@ -176,7 +188,7 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
         if(vehicles[PLAYER].getHealth() > vehicles[BOT].getHealth()){
             return TypesHelper.ResultType.WON;
         }
-        else if(vehicles[PLAYER].getHealth() > vehicles[BOT].getHealth()){
+        else if(vehicles[BOT].getHealth() > vehicles[PLAYER].getHealth()){
             return TypesHelper.ResultType.LOST;
         }
         else{
@@ -195,6 +207,7 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
             return;
         }
         boolean end = checkForEndOfGame();
+
         if(end){
 
             new Thread(new Runnable() {
@@ -220,32 +233,26 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
                 }
             }).start();
 
-            // todo: put result in database, stats
             playing = false;
             return;
         }
+
         deadLock = false;
         initVehiclePositionsIfNeeded();
         updateWalls();
 
-        if(!Rect.intersects(vehicles[PLAYER].getPosition(), vehicles[BOT].getPosition())){
-            for(Vehicle v: vehicles){
-                boolean toMove = true;
-                if(walls!= null){
-                    for(Rect r: walls){
-                        if(Rect.intersects(r,v.getPosition())){
-                            toMove = false;
-                        }
-                    }
-                }
-                if(toMove){
-                    v.moveForward(RenderHelper.RenderSizes.VEHICLE_SPEED);
-                }
+        moveVehicleForward(vehicles[BOT]);
+        if(!botPlays){
+            if(touchDirection == -1){
+                moveVehicleBackward(vehicles[PLAYER]);
             }
-        }else{
-            deadLock = true;
+            else if(touchDirection == 1){
+                moveVehicleForward(vehicles[PLAYER]);
+            }
         }
-
+        else{
+            moveVehicleForward(vehicles[PLAYER]);
+        }
 
         handleCollisions();
         for(int i=0; i<2;i++){
@@ -253,8 +260,54 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
         }
     }
 
+    private void moveVehicleBackward(Vehicle v) {
+        Rect cutRect = new Rect(v.getPosition());
+        cutRect.left += cutRect.width()/2;
+        cutRect.bottom -= cutRect.height()/5;
+        cutRect.top += cutRect.height()/5;
+
+        boolean toMove = true;
+        if(walls != null){
+            for(Rect r: walls){
+                if(Rect.intersects(r,cutRect)){
+                    toMove = false;
+                    Log.i("INTERSECTS", "WALL");
+                }
+            }
+        }
+        if(Rect.intersects(cutRect, vehicles[BOT].getPosition())){
+            toMove = false;
+            Log.i("INTERSECTS", "BOT");
+        }
+
+        if(toMove){
+            v.moveForward(-RenderHelper.RenderSizes.VEHICLE_SPEED);
+            Log.i("INTERSECTS", "MOVING");
+        }
+    }
+
+    private void moveVehicleForward(Vehicle v) {
+        if(!Rect.intersects(vehicles[PLAYER].getPosition(), vehicles[BOT].getPosition())){
+            boolean toMove = true;
+            if(walls!= null){
+                for(Rect r: walls){
+                    if(Rect.intersects(r,v.getPosition())){
+                        toMove = false;
+                    }
+                }
+            }
+            if(toMove){
+                v.moveForward(RenderHelper.RenderSizes.VEHICLE_SPEED);
+            }
+
+        }else{
+            deadLock = true;
+        }
+    }
+
     private boolean checkForEndOfGame() {
         for(Vehicle v:vehicles){
+            if(v == null) continue;
             if(v.getHealth() <= 0) return true;
         }
         return false;
@@ -340,5 +393,48 @@ public class BattleView extends SurfaceView implements SurfaceHolder.Callback {
             vehicles[PLAYER].hit(hit);
             vehicles[BOT].hit(hit);
         }
+    }
+
+    public void touchGoForward(){
+        touchDirection = 1;
+        Log.i("TOUCHBATTLE", "FORWARD");
+    }
+
+    public void touchGoBackward(){
+        touchDirection = -1;
+        Log.i("TOUCHBATTLE", "BACKWARD");
+    }
+
+    public void touchNotGoing(){
+        touchDirection = 0;
+        Log.i("TOUCHBATTLE", "NOT GOING");
+    }
+
+    public void touchFire(){
+
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        if(botPlays) return false;
+
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                touchX = event.getX();
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                boolean goingLeft = event.getX() - touchX < 0;
+                if(goingLeft){
+                    touchGoForward();
+                }
+                else{
+                    touchGoBackward();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                touchNotGoing();
+        }
+
+        return false;
     }
 }

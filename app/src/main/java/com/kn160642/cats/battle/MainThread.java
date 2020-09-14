@@ -9,18 +9,18 @@ public class MainThread extends Thread {
     private SurfaceHolder surfaceHolder;
     private BattleView battleView;
     private boolean running;
-    public static Canvas canvas;
+    private static Canvas canvas;
 
     private int targetFPS = 60;
     private double averageFPS;
 
-    public MainThread(SurfaceHolder surfaceHolder, BattleView battleView) {
+    MainThread(SurfaceHolder surfaceHolder, BattleView battleView) {
         super();
         this.surfaceHolder = surfaceHolder;
         this.battleView = battleView;
     }
 
-    public void setRunning(boolean isRunning) {
+    void setRunning(boolean isRunning) {
         running = isRunning;
     }
 
@@ -43,7 +43,7 @@ public class MainThread extends Thread {
                     this.battleView.update();
                     this.battleView.draw(canvas);
                 }
-            } catch (Exception e) {       }
+            } catch (Exception e) { e.printStackTrace();     }
             finally {
                 if (canvas != null)            {
                     try {
@@ -59,8 +59,8 @@ public class MainThread extends Thread {
             waitTime = targetTime - timeMillis;
 
             try {
-                this.sleep(waitTime);
-            } catch (Exception e) {}
+                sleep(waitTime);
+            } catch (Exception e) { e.printStackTrace();}
 
             totalTime += System.nanoTime() - startTime;
             frameCount++;

@@ -44,12 +44,7 @@ public class AddUserFragment extends Fragment {
                 EditText t = root.findViewById(R.id.edit_username);
                 final String username = t.getText().toString();
                 if(username.isEmpty()) return;
-
-                // TODO: check if user already exists
-
                 UserHandler.addUser(getContext(),username);
-
-
                 NavHostFragment navHostFragment = (NavHostFragment) getActivity().getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
                 NavController navController = navHostFragment.getNavController();
                 navController.navigateUp();

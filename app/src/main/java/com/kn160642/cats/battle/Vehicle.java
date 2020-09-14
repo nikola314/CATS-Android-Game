@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class Vehicle {
     private List<Component> components;
-    Map<Component, Bitmap> compImages;
+    private Map<Component, Bitmap> compImages;
     private Resources res;
 
     private boolean isLeft;
@@ -47,7 +47,7 @@ public class Vehicle {
         return width;
     }
 
-    public void setWidth(int width) {
+    void setWidth(int width) {
         this.width = width;
     }
 
@@ -55,15 +55,15 @@ public class Vehicle {
         return height;
     }
 
-    public void setHeight(int height) {
+    void setHeight(int height) {
         this.height = height;
     }
 
-    public Rect getPosition() {
+    Rect getPosition() {
         return position;
     }
 
-    public void setPosition(Rect position) {
+    void setPosition(Rect position) {
         this.position = position;
         initializeWeapon();
     }
@@ -74,7 +74,7 @@ public class Vehicle {
         paint= new Paint(Color.BLACK);
     }
 
-    public Vehicle(List<Component> comps, boolean isLeft, Resources res){
+    Vehicle(List<Component> comps, boolean isLeft, Resources res){
         this();
         this.isLeft = isLeft;
         components = comps;
@@ -105,10 +105,12 @@ public class Vehicle {
         }
     }
 
-    public void draw(Canvas canvas){
+    void draw(Canvas canvas){
         for(Component c: components){
+            if(c==null) continue;
             Rect r = position;
             Bitmap bmp = compImages.get(c);
+            if(bmp==null || canvas == null || r == null) continue;
             if(c.getType() == TypesHelper.ComponentType.WHEELS){
                 r = RenderHelper.RenderSizes.getWheelRect(1,position, isLeft);
                 canvas.drawBitmap (bmp, RenderHelper.rotateBitmap(bmp,r,wheelRotationAngle), null);

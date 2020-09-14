@@ -1,7 +1,9 @@
 package com.kn160642.cats.db.handlers;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.Entities.UserComponent;
@@ -20,12 +22,14 @@ public class UserHandler {
                 user.setWeaponId(Globals.defaultWeaponId);
 
                 MyDatabase db = MyDatabase.getInstance(context);
-                long userId = db.userDao().insertUser(user);
 
-                db.componentDao().insertUserComponent(new UserComponent(userId, Globals.defaultChassisId));
-                db.componentDao().insertUserComponent(new UserComponent(userId, Globals.defaultWheelsId));
-                db.componentDao().insertUserComponent(new UserComponent(userId, Globals.defaultWeaponId));
-
+                long userId = db.userDao().getUserId(username);
+                if(userId<=0){
+                    userId = db.userDao().insertUser(user);
+                    db.componentDao().insertUserComponent(new UserComponent(userId, Globals.defaultChassisId));
+                    db.componentDao().insertUserComponent(new UserComponent(userId, Globals.defaultWheelsId));
+                    db.componentDao().insertUserComponent(new UserComponent(userId, Globals.defaultWeaponId));
+                }
             }
         }).start();
     }

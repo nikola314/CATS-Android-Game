@@ -22,8 +22,10 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 import com.kn160642.cats.R;
 import com.kn160642.cats.db.Entities.Box;
 import com.kn160642.cats.db.Entities.Component;
+import com.kn160642.cats.db.Entities.History;
 import com.kn160642.cats.db.Entities.User;
 import com.kn160642.cats.db.Entities.UserComponent;
 import com.kn160642.cats.db.MyDatabase;
@@ -87,7 +90,6 @@ public class GameFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_game, container, false);
 
         playMusicIfNeeded();
@@ -238,7 +240,41 @@ public class GameFragment extends Fragment {
         btnStats.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TODO: implement
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = requireActivity().getLayoutInflater();
+                View view = inflater.inflate(R.layout.stats_layout, null);
+                final ListView listView = (ListView) view.findViewById(R.id.list_view);
+
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MyDatabase db = MyDatabase.getInstance(getContext());
+                        List<History> lStats = db.historyDao().getStatsForUserDead(Globals.getActiveUserId());
+                        String[] stats = new String[]{"No games."};
+                        if(lStats!= null && lStats.size()>0){
+                            stats = new String[lStats.size()];
+                            int i = 0;
+                            for(History stat: lStats){
+                                stats[i++] = stat.getStringToShow();
+                            }
+                        }
+                        ArrayAdapter adapter = new ArrayAdapter<String>(getActivity(),R.layout.stats_list_item,stats);
+                        listView.setAdapter(adapter);
+
+                    }
+                }).start();
+
+                builder.setView(view)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+
+                builder.setTitle("Stats");
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
@@ -395,7 +431,7 @@ public class GameFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getContext(),message,Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),message,Toast.LENGTH_SHORT).show();
             }
         });
     }
